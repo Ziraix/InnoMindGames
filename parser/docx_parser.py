@@ -40,12 +40,18 @@ def parse_from_docx(path: Path) -> dict:
             if question is not None:
                 tour['questions'].append(question)
             question_number = int(line.removeprefix('Вопрос'))
-            question_text = ''
+            question_parts = []
             next_line = next(paragraphs)
-            while not next_line.startswith('Ответ: '):
-                question_text += next_line.strip()
+            while not next_line.startswith('Ответ:'):
+                question_parts.append(next_line.strip())
                 next_line = next(paragraphs)
-            question_answer = next_line.removeprefix('Ответ: ')
+            question_text = '\n'.join(question_parts)
+            if 'Ответ:' in question_text:
+                raise ValueError(
+                    f"Вопрос {question_number}: 'Ответ:' на одной строке с вопросом. "
+                    f"Текст: {question_text[:80]!r}"
+                )
+            question_answer = next_line.removeprefix('Ответ:').strip()
             question = {
                 'number': question_number,
                 'question_text': question_text,
