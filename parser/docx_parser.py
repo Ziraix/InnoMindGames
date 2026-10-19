@@ -1,4 +1,5 @@
 from docx import Document
+from pathlib import Path
 
 FIELD_KEYS = {
     'Зачёт': 'acceptable_answers',
@@ -10,8 +11,8 @@ FIELD_KEYS = {
 def get_paragraphs(document) -> list[str]:
     return [paragraph.text.strip() for paragraph in document.paragraphs if paragraph.text.strip()]
 
-def parse_from_docx(path: str) -> dict:
-    doc = Document(path)
+def parse_from_docx(path: Path) -> dict:
+    doc = Document(str(path))
     paragraphs = iter(get_paragraphs(doc))
     tournament = dict()
 
@@ -39,8 +40,12 @@ def parse_from_docx(path: str) -> dict:
             if question is not None:
                 tour['questions'].append(question)
             question_number = int(line.removeprefix('Вопрос'))
-            question_text = next(paragraphs)
-            question_answer = next(paragraphs).removeprefix('Ответ: ')
+            question_text = ''
+            next_line = next(paragraphs)
+            while not next_line.startswith('Ответ: '):
+                question_text += next_line.strip()
+                next_line = next(paragraphs)
+            question_answer = next_line.removeprefix('Ответ: ')
             question = {
                 'number': question_number,
                 'question_text': question_text,
@@ -61,7 +66,7 @@ def parse_from_docx(path: str) -> dict:
 
 
 if __name__ == "__main__":
-    path = r"D:\Projects\InnoMindGames\data\source\Чемпионат Финляндии - 2022_7274.docx"
+    path = Path(r"D:\Projects\InnoMindGames\data\source\Чемпионат Финляндии - 2022_7274.docx")
     tourn = parse_from_docx(path)
     print(tourn['tours'][0]['questions'][14])
     for tour in tourn['tours']:
