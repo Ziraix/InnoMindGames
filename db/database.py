@@ -1,6 +1,7 @@
 # db/database.py
 import sqlite3
 from pathlib import Path
+from contextlib import contextmanager
 
 DB_PATH = Path(__file__).resolve().parent.parent / "data" / "questions.db"
 
@@ -50,3 +51,12 @@ def init_db() -> None:
     """Создаёт таблицы, если их ещё нет. Идемпотентна: можно звать сколько угодно раз."""
     with get_connection() as conn:
         conn.executescript(SCHEMA_SQL)
+
+@contextmanager
+def db():
+    """Открывает соединение и закрывает его после выхода из блока."""
+    conn = get_connection()
+    try:
+        yield conn
+    finally:
+        conn.close()

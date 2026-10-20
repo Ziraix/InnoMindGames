@@ -86,22 +86,3 @@ def save_tournament(conn: sqlite3.Connection, tournament: dict) -> int:
                     )
 
     return tournament_id
-
-def get_questions_for_tournament(conn, tournament_name: str) -> list[sqlite3.Row]:
-    return conn.execute(
-        """
-        SELECT q.*, t.number AS tour_number
-        FROM questions q
-        JOIN tours t ON q.tour_id = t.id
-        JOIN tournaments tr ON t.tournament_id = tr.id
-        WHERE tr.name = ?
-        ORDER BY t.number, q.number
-        """,
-        (tournament_name,)
-    ).fetchall()
-
-
-def list_tournaments(conn) -> list[sqlite3.Row]:
-    return conn.execute(
-        "SELECT id, name, created_at FROM tournaments ORDER BY created_at DESC"
-    ).fetchall()
