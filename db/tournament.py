@@ -84,5 +84,4 @@ def save_tournament(conn: sqlite3.Connection, tournament: dict) -> int:
                             q['sources'], q['author']
                         )
                     )
-
     return tournament_id

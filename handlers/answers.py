@@ -23,10 +23,9 @@ async def on_answer(message: Message, state: FSMContext):
 
     if is_correct(user_answer, correct, acceptable):
         await message.reply(f"✅ Правильно! Ответ: {correct}")
-        await end_round(message.bot, message.chat.id, state)
+        await end_round(message.bot, message.chat.id, state, 'correct')
         return
 
-    # не совпало — суд
     await state.update_data(
         answerer_id=message.from_user.id,
         original_answer=user_answer,
@@ -52,10 +51,11 @@ async def on_judgment(callback: CallbackQuery, state: FSMContext):
         return
 
     verdict = callback.data.split(':', 1)[1]
+    outcome = 'correct' if verdict == 'yes' else 'incorrect'
     prefix = "✅ Засчитано" if verdict == 'yes' else "❌ Не засчитано"
     await callback.message.edit_text(
         f"{prefix}. Правильный ответ: {data['correct_answer']}",
         reply_markup=None,
     )
     await callback.answer()
-    await end_round(callback.bot, callback.message.chat.id, state)
+    await end_round(callback.bot, callback.message.chat.id, state, outcome)

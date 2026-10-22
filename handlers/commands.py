@@ -5,7 +5,7 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKe
 
 from db.database import db
 from db.questions import list_tournaments, get_tournament, get_questions_for_tournament
-from game.engine import start_question
+from game.engine import start_question, end_game
 
 router = Router()
 
@@ -55,7 +55,9 @@ async def on_tournament_chosen(callback: CallbackQuery, state: FSMContext, bot: 
     )
     await callback.answer()
 
-    await state.update_data(tournament_id=tournament_id, current_index=0)
+    await state.update_data(tournament_id=tournament_id,
+                            current_index=0,
+                            score={"correct": 0, "incorrect": 0})
     await start_question(bot, callback.message.chat.id, state)
 
 @router.message(Command('play'))
@@ -67,7 +69,6 @@ async def cmd_play(message: Message, state: FSMContext, bot: Bot):
 
     tournament_id = int(args[1].strip())
 
-    # проверим, что турнир существует
     with db() as conn:
         tournament = get_tournament(conn, tournament_id)
 
@@ -75,6 +76,15 @@ async def cmd_play(message: Message, state: FSMContext, bot: Bot):
         await message.answer(f"Турнир с id={tournament_id} не найден")
         return
 
-    await state.update_data(tournament_id=tournament_id, current_index=0)
+    await state.update_data(tournament_id=tournament_id,
+                            current_index=0,
+                            score={"correct": 0, "incorrect": 0})
     await message.answer(f"Начинаем: {tournament['name']}")
     await start_question(bot, message.chat.id, state)
+
+@router.message(Command('stop'))
+async def cmd_stop(message: Message, state: FSMContext, bot: Bot):
+    if await state.get_state() is None:
+        await message.answer("Сейчас нет активной игры")
+        return
+    await end_game(bot, message.chat.id, state)
