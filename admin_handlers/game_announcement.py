@@ -1,10 +1,9 @@
 from aiogram import Router, F, Bot
-from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from aiogram3_calendar import SimpleCalendar, simple_cal_callback
 
-from config import ADMINS_ID, MAIN_GROUP_ID, THREAD_ID, SUB_THREAD_ID
+from config import MAIN_GROUP_ID, THREAD_ID, SUB_THREAD_ID
 from game.states import AdminStates
 from keyboards.admin_keyboards import *
 
@@ -23,43 +22,15 @@ WEEKDAYS = {
     4: "Пятница", 5: "Суббота", 6: "Воскресенье",
 }
 
-@router.message(Command('admin'))
-async def admin(message: Message):
-    if message.from_user is None:
-        return
-    if message.from_user.id not in ADMINS_ID:
-        await message.answer("У вас нет прав на использование этой команды")
-        return
-    await message.answer(
-        text="Приветствую, мой господин. Что пожелаете?\n",
-        reply_markup = main_admin_menu
-    )
-
-@router.callback_query(F.data == 'message_announcement')
-async def message_announcement(callback: CallbackQuery, state: FSMContext):
-    await callback.message.edit_text("Отправь текст сообщения:")
-    await callback.answer()
-    await state.set_state(AdminStates.waiting_for_message)
-
-@router.message(AdminStates.waiting_for_message, F.text)
-async def process_message_announcement(message: Message, state: FSMContext, bot: Bot):
-    await bot.copy_message(
-        chat_id=MAIN_GROUP_ID,
-        from_chat_id=message.chat.id,
-        message_id=message.message_id,
-        message_thread_id=THREAD_ID,
-    )
-    await message.answer("✅ Отправлено")
-    await state.clear()
-
 async def render_game_announcement(target: CallbackQuery|Message, state: FSMContext):
     data = await state.get_data()
     photo_id = data.get('photo_id', None)
+    photo_status = "Загружена" if photo_id else "Не загружена"
     text = ("Введите данные об игре.\n"
              f"Название: {data.get('name', '')}\n"
              f"Дата и время: {data.get('date', '')} {data.get('time', '')}\n"
              f"Локация: {data.get('location', '')}\n"
-             f"Картинка: {"Загружена" if photo_id else "Не загружена"}")
+             f"Картинка: {photo_status}")
     if isinstance(target, CallbackQuery):
         await target.message.edit_text(text=text, reply_markup=game_announcement_keyboard)
     elif isinstance(target, Message):

@@ -5,9 +5,9 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.strategy import FSMStrategy
 
 from config import BOT_TOKEN
-from db import questions
 from db.database import init_db
-from handlers import commands, answers, admin
+from handlers import commands, answers
+from admin_handlers import admin, game_announcement, message_announcement, poll_announcement
 
 
 async def main():
@@ -21,6 +21,9 @@ async def main():
     dp.include_router(commands.router)
     dp.include_router(answers.router)
     dp.include_router(admin.router)
+    dp.include_router(game_announcement.router)
+    dp.include_router(message_announcement.router)
+    dp.include_router(poll_announcement.router)
 
     await dp.start_polling(bot)
 

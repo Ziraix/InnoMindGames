@@ -11,3 +11,4 @@ class AdminStates(StatesGroup):
     game_announcement_name = State()
     game_announcement_location = State()
     game_announcement_picture = State()
+    poll_announcement_video_name = State()
