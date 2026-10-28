@@ -38,7 +38,7 @@ def db():
 
 def list_videos(conn: sqlite3.Connection) -> list[sqlite3.Row]:
     return conn.execute(
-        "SELECT id, name, duration FROM videos"
+        "SELECT id, name, duration FROM videos ORDER BY id"
     ).fetchall()
 
 def add_video(conn: sqlite3.Connection, name: str, duration: int) -> None:
