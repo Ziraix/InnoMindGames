@@ -13,5 +13,5 @@ if not BOT_TOKEN:
 
 ADMINS_ID = {int(x) for x in os.getenv('ADMINS_ID', '').split(',') if x.strip()}
 MAIN_GROUP_ID = int(os.getenv('MAIN_GROUP_ID'))
-THREAD_ID = int(os.getenv('THREAD_ID') or 0) or None
+MAIN_THREAD_ID = int(os.getenv('THREAD_ID') or 0) or None
 SUB_THREAD_ID = int(os.getenv('SUB_THREAD_ID') or 0) or None

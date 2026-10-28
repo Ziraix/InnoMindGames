@@ -69,11 +69,3 @@ def parse_from_docx(path: Path) -> dict:
     tour['questions'].append(question)
     tournament['tours'].append(tour)
     return tournament
-
-
-if __name__ == "__main__":
-    path = Path(r"D:\Projects\InnoMindGames\data\source\Чемпионат Финляндии - 2022_7274.docx")
-    tourn = parse_from_docx(path)
-    print(tourn['tours'][0]['questions'][14])
-    for tour in tourn['tours']:
-        print(f"Тур {tour['number']}: {len(tour['questions'])} вопросов")
