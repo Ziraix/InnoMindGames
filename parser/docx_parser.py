@@ -9,7 +9,7 @@ FIELD_KEYS = {
 }
 
 def get_paragraphs(document) -> list[str]:
-    return [paragraph.text.strip() for paragraph in document.paragraphs if paragraph.text.strip()]
+    return [paragraph.text.replace('\u00a0', ' ').strip() for paragraph in document.paragraphs if paragraph.text.strip()]
 
 def parse_from_docx(path: Path) -> dict:
     doc = Document(str(path))
@@ -27,7 +27,7 @@ def parse_from_docx(path: Path) -> dict:
         except StopIteration:
             break
 
-        if line.startswith('Тур'):
+        if line.startswith('Тур '):
             if tour is not None:
                 if question is not None:
                     tour['questions'].append(question)
@@ -36,7 +36,7 @@ def parse_from_docx(path: Path) -> dict:
             tour_number = int(line.removeprefix('Тур'))
             tour = {'number': tour_number, 'questions': []}
 
-        elif line.startswith('Вопрос'):
+        elif line.startswith('Вопрос '):
             if question is not None:
                 tour['questions'].append(question)
             question_number = int(line.removeprefix('Вопрос'))
