@@ -20,3 +20,9 @@ poll_admin_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Удалить видео', callback_data='poll_announcement:delete_video')],
     [InlineKeyboardButton(text='Отправить опрос', callback_data='poll_announcement:send')],
 ])
+
+poll_add_video_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Название', callback_data='poll_announcement:add_video:name'),
+     InlineKeyboardButton(text='Длительность', callback_data='poll_announcement:add_video:duration')],
+    [InlineKeyboardButton(text='Сохранить', callback_data='poll_announcement:add_video:save'),]
+])

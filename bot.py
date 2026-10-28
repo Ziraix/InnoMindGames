@@ -5,7 +5,7 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.strategy import FSMStrategy
 
 from config import BOT_TOKEN
-from db.database import init_db
+from db import database, videos
 from handlers import commands, answers
 from admin_handlers import admin, game_announcement, message_announcement, poll_announcement
 
@@ -13,7 +13,8 @@ from admin_handlers import admin, game_announcement, message_announcement, poll_
 async def main():
     logging.basicConfig(level=logging.INFO)
 
-    init_db()
+    database.init_db()
+    videos.init_db()
 
     bot = Bot(token=BOT_TOKEN)
 
