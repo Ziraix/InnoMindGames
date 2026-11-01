@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from aiogram3_calendar import SimpleCalendar, simple_cal_callback
 
-from config import MAIN_GROUP_ID, THREAD_ID, SUB_THREAD_ID
+from config import MAIN_GROUP_ID, MAIN_THREAD_ID, SUB_THREAD_ID
 from game.states import AdminStates
 from keyboards.admin_keyboards import *
 
@@ -143,7 +143,7 @@ async def game_announcement_send(callback: CallbackQuery, state: FSMContext, bot
                     f"Когда❓ {data['time']}\n")
     await bot.send_photo(
         chat_id=MAIN_GROUP_ID,
-        message_thread_id=THREAD_ID,
+        message_thread_id=MAIN_THREAD_ID,
         caption=announcement,
         photo=data['photo_id']
     )

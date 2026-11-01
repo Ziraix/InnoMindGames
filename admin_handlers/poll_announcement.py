@@ -2,7 +2,7 @@ from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from config import MAIN_GROUP_ID, THREAD_ID
+from config import MAIN_GROUP_ID, MAIN_THREAD_ID
 from game.states import AdminStates
 from keyboards.admin_keyboards import *
 from db.videos import add_video, list_videos, delete_video, db
@@ -75,6 +75,12 @@ async def poll_announcement_add_video_duration_process(message: Message, state: 
 @router.callback_query(F.data == "poll_announcement:add_video:save")
 async def poll_announcement_add_video_save(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
+    if len(data['video_name']) + len(str(data['video_duration'])) >= 93:
+        await callback.answer(
+            f"Видео должно быть не длиннее 100 символов, а сейчас в нем {7 + len(data['video_name']) + len(str(data['video_duration']))}",
+            show_alert=True,
+        )
+        return
     with db() as conn:
         add_video(conn, data['video_name'], data['video_duration'])
     await state.clear()
@@ -116,12 +122,11 @@ async def poll_announcement_send(callback: CallbackQuery, bot: Bot):
             show_alert=True,
         )
         return
-
     await bot.send_poll(
         chat_id=MAIN_GROUP_ID,
-        message_thread_id=THREAD_ID,
-        options=[f'{name} ({duration} мин.)' for video_id, name, duration in videos],
-        question="Что смотрим в следующий раз?",
+        message_thread_id=MAIN_THREAD_ID,
+        options=[f'{name} ({duration} мин.)' for video_id, name, duration in videos[:10]],
+        question="Пришло время выбирать видео для совместного просмотра!",
         is_anonymous=False,
         allows_multiple_answers=True
     )

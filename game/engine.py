@@ -14,6 +14,7 @@ async def start_question(bot: Bot, chat_id: int, state: FSMContext) -> None:
     data = await state.get_data()
     tournament_id = data["tournament_id"]
     current_index = data["current_index"]
+    thread_id = data.get("thread_id")
     with db() as conn:
         questions = get_questions_for_tournament(conn, tournament_id)
 
@@ -24,7 +25,7 @@ async def start_question(bot: Bot, chat_id: int, state: FSMContext) -> None:
     question_data = questions[current_index]
     question = (f"Вопрос {question_data['number']}\n"
                 f"{question_data['question_text']}")
-    sent = await bot.send_message(chat_id=chat_id, text=question)
+    sent = await bot.send_message(chat_id=chat_id, text=question, message_thread_id=thread_id)
     await state.update_data(question_message_id=sent.message_id,
                             correct_answer=question_data['question_answer'],
                             acceptable_answers=question_data['acceptable_answers'])
@@ -35,6 +36,7 @@ async def start_question(bot: Bot, chat_id: int, state: FSMContext) -> None:
             data = await state.get_data()
             await bot.send_message(
                 chat_id=chat_id,
+                message_thread_id=thread_id,
                 text=f"⏰ Время вышло. Правильный ответ: {data['correct_answer']}"
             )
             await end_round(bot, chat_id, state, 'incorrect')
@@ -47,12 +49,14 @@ async def end_round(bot: Bot, chat_id: int, state: FSMContext, outcome: str) -> 
     tournament_id = data["tournament_id"]
     next_index = data["current_index"] + 1
     score = dict(data["score"])
+    thread_id = data.get("thread_id")
     score[outcome] += 1
     await state.clear()
     cancel_timer(chat_id)
     await state.update_data(tournament_id=tournament_id,
                             current_index=next_index,
-                            score=score)
+                            score=score,
+                            thread_id=thread_id)
     await start_question(bot, chat_id, state)
 
 def is_correct(user_answer: str, correct: str, acceptable: str) -> bool:
@@ -70,8 +74,10 @@ def is_correct(user_answer: str, correct: str, acceptable: str) -> bool:
 
 async def end_game(bot: Bot, chat_id: int, state: FSMContext) -> None:
     data = await state.get_data()
+    thread_id = data.get("thread_id")
     score = dict(data["score"])
     await bot.send_message(chat_id=chat_id,
+                           message_thread_id=thread_id,
                            text="Турнир завершён, спасибо за игру!\n"
                                 "Ваш счёт:\n"
                                 f"Верных ответов: {score['correct']}\n"

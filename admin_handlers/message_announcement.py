@@ -2,7 +2,7 @@ from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
-from config import MAIN_GROUP_ID, THREAD_ID
+from config import MAIN_GROUP_ID, MAIN_THREAD_ID
 from game.states import AdminStates
 
 router = Router()
@@ -19,7 +19,7 @@ async def process_message_announcement(message: Message, state: FSMContext, bot:
         chat_id=MAIN_GROUP_ID,
         from_chat_id=message.chat.id,
         message_id=message.message_id,
-        message_thread_id=THREAD_ID,
+        message_thread_id=MAIN_THREAD_ID,
     )
     await message.answer("✅ Отправлено")
     await state.clear()

@@ -57,7 +57,8 @@ async def on_tournament_chosen(callback: CallbackQuery, state: FSMContext, bot: 
 
     await state.update_data(tournament_id=tournament_id,
                             current_index=0,
-                            score={"correct": 0, "incorrect": 0})
+                            score={"correct": 0, "incorrect": 0},
+                            thread_id=callback.message.message_thread_id if callback.message.message_thread_id != 1 else None)
     await start_question(bot, callback.message.chat.id, state)
 
 @router.message(Command('play'))
