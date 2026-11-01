@@ -220,5 +220,8 @@ __marimo__/
 .streamlit/secrets.toml
 
 # data
-data/*.db
-data/source
+data/*
+!data/.gitkeep
+!data/source/
+data/source/*
+!data/source/.gitkeep
