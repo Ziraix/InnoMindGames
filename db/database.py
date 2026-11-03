@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS tournaments (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     name        TEXT NOT NULL UNIQUE,
     redactors   TEXT NOT NULL DEFAULT '',
+    preamble    TEXT NOT NULL DEFAULT '',
     created_at  TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -19,19 +20,22 @@ CREATE TABLE IF NOT EXISTS tours (
     id             INTEGER PRIMARY KEY AUTOINCREMENT,
     tournament_id  INTEGER NOT NULL REFERENCES tournaments(id) ON DELETE CASCADE,
     number         INTEGER NOT NULL,
+    redactors      TEXT NOT NULL DEFAULT '',
+    preamble       TEXT NOT NULL DEFAULT '',
     UNIQUE (tournament_id, number)
 );
 
 CREATE TABLE IF NOT EXISTS questions (
-    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
-    tour_id             INTEGER NOT NULL REFERENCES tours(id) ON DELETE CASCADE,
-    number              INTEGER NOT NULL,
-    question_text       TEXT NOT NULL,
-    question_answer     TEXT NOT NULL,
-    acceptable_answers  TEXT NOT NULL DEFAULT '',
-    comment             TEXT NOT NULL DEFAULT '',
-    sources             TEXT NOT NULL DEFAULT '',
-    author              TEXT NOT NULL DEFAULT '',
+    id                      INTEGER PRIMARY KEY AUTOINCREMENT,
+    tour_id                 INTEGER NOT NULL REFERENCES tours(id) ON DELETE CASCADE,
+    number                  INTEGER NOT NULL,
+    question_text           TEXT NOT NULL,
+    question_answer         TEXT NOT NULL,
+    acceptable_answers      TEXT NOT NULL DEFAULT '',
+    unacceptable_answers    TEXT NOT NULL DEFAULT '',
+    comment                 TEXT NOT NULL DEFAULT '',
+    sources                 TEXT NOT NULL DEFAULT '',
+    author                  TEXT NOT NULL DEFAULT '',
     UNIQUE (tour_id, number)
 );
 

@@ -1,15 +1,28 @@
 import sqlite3
 
+
 def save_tournament(conn: sqlite3.Connection, tournament: dict) -> int:
-    """Сохраняет турнир. Возвращает его id"""
+    """Сохраняет турнир. Возвращает его id.
+
+    Повторная загрузка:
+    - турнир: id сохраняется, redactors/preamble обновляются
+    - туры: существующие обновляются, новые добавляются, исчезнувшие удаляются
+    - вопросы: существующие обновляются, новые добавляются, исчезнувшие удаляются
+    """
     with conn:
         row = conn.execute(
             """
-            INSERT INTO tournaments (name, redactors) VALUES (?, ?)
-            ON CONFLICT(name) DO UPDATE SET redactors = excluded.redactors
+            INSERT INTO tournaments (name, redactors, preamble) VALUES (?, ?, ?)
+            ON CONFLICT(name) DO UPDATE SET
+                redactors = excluded.redactors,
+                preamble  = excluded.preamble
             RETURNING id
             """,
-            (tournament['name'], ', '.join(tournament['redactors']))
+            (
+                tournament['name'],
+                ', '.join(tournament['redactors']),
+                tournament['preamble'],
+            )
         ).fetchone()
         tournament_id = row['id']
 
@@ -26,16 +39,23 @@ def save_tournament(conn: sqlite3.Connection, tournament: dict) -> int:
             if num not in incoming_tour_numbers:
                 conn.execute("DELETE FROM tours WHERE id = ?", (old_id,))
 
-        tour_ids = {}
+        tour_ids: dict[int, int] = {}
         for t in tournament['tours']:
+            redactors_str = ', '.join(t['redactors'])
             if t['number'] in existing_tours:
-                tour_ids[t['number']] = existing_tours[t['number']]
+                tour_id = existing_tours[t['number']]
+                conn.execute(
+                    "UPDATE tours SET redactors = ?, preamble = ? WHERE id = ?",
+                    (redactors_str, t['preamble'], tour_id)
+                )
             else:
                 cur = conn.execute(
-                    "INSERT INTO tours (tournament_id, number) VALUES (?, ?)",
-                    (tournament_id, t['number'])
+                    "INSERT INTO tours (tournament_id, number, redactors, preamble) "
+                    "VALUES (?, ?, ?, ?)",
+                    (tournament_id, t['number'], redactors_str, t['preamble'])
                 )
-                tour_ids[t['number']] = cur.lastrowid
+                tour_id = cur.lastrowid
+            tour_ids[t['number']] = tour_id
 
         for t in tournament['tours']:
             tour_id = tour_ids[t['number']]
@@ -59,13 +79,13 @@ def save_tournament(conn: sqlite3.Connection, tournament: dict) -> int:
                         UPDATE questions SET
                             question_text = ?, question_answer = ?,
                             acceptable_answers = ?, comment = ?,
-                            sources = ?, author = ?
+                            sources = ?, author = ?, unacceptable_answers = ?
                         WHERE id = ?
                         """,
                         (
                             q['question_text'], q['question_answer'],
                             q['acceptable_answers'], q['comment'],
-                            q['sources'], q['author'],
+                            q['sources'], q['author'], q['unacceptable_answers'],
                             existing_q[q['number']]
                         )
                     )
@@ -74,14 +94,16 @@ def save_tournament(conn: sqlite3.Connection, tournament: dict) -> int:
                         """
                         INSERT INTO questions
                             (tour_id, number, question_text, question_answer,
-                             acceptable_answers, comment, sources, author)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                             acceptable_answers, comment, sources, author,
+                             unacceptable_answers)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                         """,
                         (
                             tour_id, q['number'],
                             q['question_text'], q['question_answer'],
                             q['acceptable_answers'], q['comment'],
-                            q['sources'], q['author']
+                            q['sources'], q['author'], q['unacceptable_answers']
                         )
                     )
+
     return tournament_id
