@@ -20,6 +20,7 @@ async def on_answer(message: Message, state: FSMContext):
     user_answer = message.text.strip() if message.text else ''
     correct = data['correct_answer']
     acceptable = data.get('acceptable_answers', '')
+    unacceptable = data.get('unacceptable_answers', '')
 
     if is_correct(user_answer, correct, acceptable):
         await message.reply(f"✅ Правильно! Ответ: {correct}")
@@ -36,7 +37,9 @@ async def on_answer(message: Message, state: FSMContext):
         InlineKeyboardButton(text="Нет", callback_data="judge:no"),
     ]])
     await message.reply(
-        f"Правильный ответ: {correct}\n"
+        text=f"Правильный ответ: {correct}\n"
+        f"Зачёт: {acceptable}\n"
+        f"Незачёт: {unacceptable}"
         f"Твой ответ: «{user_answer}»\n\n"
         f"Считаем правильным?",
         reply_markup=buttons,

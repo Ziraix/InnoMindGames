@@ -44,7 +44,7 @@ async def on_tournament_chosen(callback: CallbackQuery, state: FSMContext, bot: 
     with db() as conn:
         tournament = get_tournament(conn, tournament_id)
         questions = get_questions_for_tournament(conn, tournament_id)
-
+    preamble = tournament['preamble']
     if tournament is None:
         await callback.answer("Турнир не найден", show_alert=True)
         return
@@ -52,6 +52,7 @@ async def on_tournament_chosen(callback: CallbackQuery, state: FSMContext, bot: 
     await callback.message.edit_text(
         f"Турнир: {tournament['name']}\n"
         f"Вопросов: {len(questions)}\n\n"
+        f"{preamble}"
     )
     await callback.answer()
 
