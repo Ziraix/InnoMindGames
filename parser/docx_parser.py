@@ -21,16 +21,10 @@ def parse_from_docx(path: Path) -> dict:
     tournament['tours'] = []
     tour = None
     question = None
-    while True:
-        try:
-            line = next(paragraphs)
-        except StopIteration:
-            break
-
+    for line in paragraphs:
         if line.startswith('Тур '):
             if tour is not None:
-                if question is not None:
-                    tour['questions'].append(question)
+                tour['questions'].append(question)
                 tournament['tours'].append(tour)
                 question = None
             tour_number = int(line.removeprefix('Тур'))
@@ -46,11 +40,6 @@ def parse_from_docx(path: Path) -> dict:
                 question_parts.append(next_line.strip())
                 next_line = next(paragraphs)
             question_text = '\n'.join(question_parts)
-            if 'Ответ:' in question_text:
-                raise ValueError(
-                    f"Вопрос {question_number}: 'Ответ:' на одной строке с вопросом. "
-                    f"Текст: {question_text[:80]!r}"
-                )
             question_answer = next_line.removeprefix('Ответ:').strip()
             question = {
                 'number': question_number,
