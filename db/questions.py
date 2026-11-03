@@ -25,6 +25,6 @@ def get_questions_for_tournament(
 
 def get_tournament(conn: sqlite3.Connection, tournament_id: int) -> sqlite3.Row | None:
     return conn.execute(
-        "SELECT id, name FROM tournaments WHERE id = ?",
+        "SELECT id, name, preamble FROM tournaments WHERE id = ?",
         (tournament_id,)
     ).fetchone()

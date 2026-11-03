@@ -28,7 +28,8 @@ async def start_question(bot: Bot, chat_id: int, state: FSMContext) -> None:
     sent = await bot.send_message(chat_id=chat_id, text=question, message_thread_id=thread_id)
     await state.update_data(question_message_id=sent.message_id,
                             correct_answer=question_data['question_answer'],
-                            acceptable_answers=question_data['acceptable_answers'])
+                            acceptable_answers=question_data['acceptable_answers'],
+                            unacceptable_answers=question_data['unacceptable_answers'])
     await state.set_state(GameStates.waiting_for_answer)
     async def on_timeout():
             if await state.get_state() != GameStates.waiting_for_answer:
@@ -37,7 +38,10 @@ async def start_question(bot: Bot, chat_id: int, state: FSMContext) -> None:
             await bot.send_message(
                 chat_id=chat_id,
                 message_thread_id=thread_id,
-                text=f"⏰ Время вышло. Правильный ответ: {data['correct_answer']}"
+                text=f"⏰ Время вышло. "
+                     f"\nПравильный ответ: {data['correct_answer']}"
+                     f"\nЗачёт: {data['acceptable_answers']}"
+                     f"\nНезачёт: {data['unacceptable_answers']}"
             )
             await end_round(bot, chat_id, state, 'incorrect')
     task = asyncio.create_task(delay(60, on_timeout))
