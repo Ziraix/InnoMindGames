@@ -57,7 +57,8 @@ async def on_judgment(callback: CallbackQuery, state: FSMContext):
     outcome = 'correct' if verdict == 'yes' else 'incorrect'
     prefix = "✅ Засчитано" if verdict == 'yes' else "❌ Не засчитано"
     await callback.message.edit_text(
-        f"{prefix}. Правильный ответ: {data['correct_answer']}",
+        f"{prefix}. Правильный ответ: {data['correct_answer']}"
+        f"\nКомментарий: {data['comment']}",
         reply_markup=None,
     )
     await callback.answer()
