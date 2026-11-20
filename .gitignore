@@ -219,9 +219,11 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# data
-data/*
-!data/.gitkeep
-!data/source/
-data/source/*
-!data/source/.gitkeep
+# core_data
+admin/admin_data/*
+!admin/admin_data/.gitkeep
+core/core_data/*
+!core/core_data/.gitkeep
+!core/core_data/source
+core/core_data/source/*
+!core/core_data/source/.gitkeep
