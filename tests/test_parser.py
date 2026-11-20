@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from parser.docx_parser import parse_from_docx
+from parsers.docx_parser import parse_from_docx
 
 DATA = Path(__file__).parent / "data"
 

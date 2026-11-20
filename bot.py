@@ -5,9 +5,11 @@ from aiogram import Bot, Dispatcher
 from aiogram.fsm.strategy import FSMStrategy
 
 from config import BOT_TOKEN
-from db import database, videos
-from handlers import commands, answers
-from admin_handlers import admin, game_announcement, message_announcement, poll_announcement
+from core.db import database
+from admin.admin_db import videos
+from core.handlers import commands, answers
+from admin.admin_handlers import admin, message_announcement, poll_announcement
+from admin.admin_handlers import game_announcement
 
 
 async def main():

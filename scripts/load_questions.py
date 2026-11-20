@@ -2,9 +2,9 @@ import argparse
 import sys
 from pathlib import Path
 
-from db.database import init_db, get_connection
-from db.tournament import save_tournament
-from parser.docx_parser import parse_from_docx
+from core.db.database import init_db, get_connection
+from core.db.tournament import save_tournament
+from parsers.docx_parser import parse_from_docx
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_SOURCE_DIR = PROJECT_ROOT / "data" / "source"

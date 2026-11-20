@@ -4,8 +4,8 @@ from aiogram.types import Message, CallbackQuery
 from aiogram3_calendar import SimpleCalendar, simple_cal_callback
 
 from config import MAIN_GROUP_ID, MAIN_THREAD_ID, SUB_THREAD_ID
-from game.states import AdminStates
-from keyboards.admin_keyboards import *
+from core.game.states import AdminStates
+from admin.admin_keyboards.admin_keyboards import *
 
 router = Router()
 

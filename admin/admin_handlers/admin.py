@@ -1,9 +1,9 @@
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 
 from config import ADMINS_ID
-from keyboards.admin_keyboards import *
+from admin.admin_keyboards.admin_keyboards import *
 
 router = Router()
 
