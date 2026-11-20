@@ -3,9 +3,9 @@ from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
-from db.database import db
-from db.questions import list_tournaments, get_tournament, get_questions_for_tournament
-from game.engine import start_question, end_game
+from core.db.database import db
+from core.db.questions import list_tournaments, get_tournament, get_questions_for_tournament
+from core.game.engine import start_question, end_game
 
 router = Router()
 

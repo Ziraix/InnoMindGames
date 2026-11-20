@@ -2,9 +2,9 @@ from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
-from game.engine import end_round, is_correct
-from game.states import GameStates
-from game.timer import cancel_timer
+from core.game.engine import end_round, is_correct
+from core.game.states import GameStates
+from core.game.timer import cancel_timer
 
 router = Router()
 

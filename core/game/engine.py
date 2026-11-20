@@ -4,10 +4,10 @@ import logging
 from aiogram import Bot
 from aiogram.fsm.context import FSMContext
 
-from db.database import db
-from db.questions import get_questions_for_tournament
-from game.states import GameStates
-from game.timer import delay, register_timer, cancel_timer
+from core.db.database import db
+from core.db.questions import get_questions_for_tournament
+from core.game.states import GameStates
+from core.game.timer import delay, register_timer, cancel_timer
 
 
 async def start_question(bot: Bot, chat_id: int, state: FSMContext) -> None:
