@@ -5,7 +5,7 @@ import pytest
 
 from parsers.docx_parser import parse_from_docx
 
-DATA = Path(__file__).parent / "data"
+DATA = Path(__file__).parent / "core_data"
 
 
 def assert_equal(actual, expected, path="$"):

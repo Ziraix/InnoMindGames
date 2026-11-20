@@ -7,7 +7,7 @@ from core.db.tournament import save_tournament
 from parsers.docx_parser import parse_from_docx
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_SOURCE_DIR = PROJECT_ROOT / "data" / "source"
+DEFAULT_SOURCE_DIR = PROJECT_ROOT / "core_data" / "source"
 
 
 def load_one(conn, path: Path) -> None:
@@ -37,7 +37,7 @@ def main() -> int:
         'path',
         nargs='?',
         default=str(DEFAULT_SOURCE_DIR),
-        help='Файл .docx или папка с ними (по умолчанию data/source/)',
+        help='Файл .docx или папка с ними (по умолчанию core_data/source/)',
     )
     args = parser.parse_args()
 

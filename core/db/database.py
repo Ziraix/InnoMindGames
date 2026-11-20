@@ -3,7 +3,7 @@ import sqlite3
 from pathlib import Path
 from contextlib import contextmanager
 
-DB_PATH = Path(__file__).resolve().parent.parent.parent / "data" / "questions.db"
+DB_PATH = Path(__file__).resolve().parent.parent.parent / "core_data" / "questions.db"
 
 SCHEMA_SQL = """
 PRAGMA foreign_keys = ON;
