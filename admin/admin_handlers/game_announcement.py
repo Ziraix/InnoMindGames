@@ -1,26 +1,36 @@
+from datetime import datetime, timedelta
+
 from aiogram import Router, F, Bot
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 from aiogram3_calendar import SimpleCalendar, simple_cal_callback
 
 from config import MAIN_GROUP_ID, MAIN_THREAD_ID, SUB_THREAD_ID
-from core.game.states import AdminStates
+from admin.states import AdminStates
 from admin.admin_keyboards.admin_keyboards import *
 
 router = Router()
 
 calendar = SimpleCalendar()
 
-MONTHS_GENITIVE = {
-    1: "января", 2: "февраля", 3: "марта", 4: "апреля",
-    5: "мая", 6: "июня", 7: "июля", 8: "августа",
-    9: "сентября", 10: "октября", 11: "ноября", 12: "декабря",
-}
+def get_nearest_sunday() -> datetime:
+    today = datetime.today()
+    days_ahead = 6 - today.weekday()
+    nearest_sunday = today + timedelta(days=days_ahead)
+    return nearest_sunday
 
-WEEKDAYS = {
-    0: "Понедельник", 1: "Вторник", 2: "Среда", 3: "Четверг",
-    4: "Пятница", 5: "Суббота", 6: "Воскресенье",
-}
+def date_to_str(date: datetime) -> str:
+    months_genitive = {
+        1: "января", 2: "февраля", 3: "марта", 4: "апреля",
+        5: "мая", 6: "июня", 7: "июля", 8: "августа",
+        9: "сентября", 10: "октября", 11: "ноября", 12: "декабря",
+    }
+
+    weekdays = {
+        0: "Понедельник", 1: "Вторник", 2: "Среда", 3: "Четверг",
+        4: "Пятница", 5: "Суббота", 6: "Воскресенье",
+    }
+    return f"{weekdays[date.weekday()].upper()} ({date.day} {months_genitive[date.month]})"
 
 async def render_game_announcement(target: CallbackQuery|Message, state: FSMContext):
     data = await state.get_data()
@@ -39,6 +49,10 @@ async def render_game_announcement(target: CallbackQuery|Message, state: FSMCont
 @router.callback_query(F.data == 'game_announcement')
 async def game_announcement(callback: CallbackQuery, state: FSMContext):
     await state.set_state(AdminStates.game_announcement)
+    await state.update_data(time='18:00')
+    await state.update_data(location="313")
+    await state.update_data(name='Лайт-пакет ЧГК')
+    await state.update_data(date=date_to_str(get_nearest_sunday()))
     await render_game_announcement(callback, state)
     await callback.answer()
 
@@ -54,7 +68,7 @@ async def game_announcement_date(callback: CallbackQuery):
 async def process_calendar(callback: CallbackQuery, callback_data: dict, state: FSMContext):
     selected, date = await calendar.process_selection(callback, callback_data)
     if selected:
-        await state.update_data(date=f"{WEEKDAYS[date.weekday()].upper()} ({date.day} {MONTHS_GENITIVE[date.month]})")
+        await state.update_data(date=date_to_str(date))
         await render_game_announcement(callback, state)
     await callback.answer()
 
