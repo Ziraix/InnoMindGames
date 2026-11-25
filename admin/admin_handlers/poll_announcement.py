@@ -3,7 +3,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from config import MAIN_GROUP_ID, MAIN_THREAD_ID
-from core.game.states import AdminStates
+from admin.states import AdminStates
 from admin.admin_keyboards.admin_keyboards import *
 from admin.admin_db.videos import add_video, list_videos, delete_video, db
 
