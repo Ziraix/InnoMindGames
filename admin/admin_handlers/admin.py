@@ -19,7 +19,13 @@ async def admin(message: Message):
 async def render_admin_menu(target: Message|CallbackQuery):
     text = "Приветствую, мой господин. Что пожелаете?\n"
     reply_markup = main_admin_menu
-    await target.answer(
-        text=text,
-        reply_markup=reply_markup
-    )
+    if isinstance(target, Message):
+        await target.answer(
+            text=text,
+            reply_markup=reply_markup
+        )
+    elif isinstance(target, CallbackQuery):
+        await target.message.answer(
+            text=text,
+            reply_markup=reply_markup
+        )
