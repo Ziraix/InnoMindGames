@@ -63,13 +63,7 @@ async def poll_announcement_add_video(callback: CallbackQuery, state: FSMContext
 
 @router.callback_query(F.data == "poll_announcement:add_video:cancel")
 async def poll_announcement_add_video_cancel(callback: CallbackQuery, state: FSMContext):
-    data = await state.get_data()
-    msg_id = data['render_poll_announcement_add_video_msg_id']
     await state.set_state(AdminStates.poll_announcement)
-    await callback.bot.delete_message(
-        chat_id=callback.message.chat.id,
-        message_id=msg_id
-    )
     await render_poll_announcement(callback, state)
     await callback.answer()
 
@@ -121,14 +115,20 @@ async def poll_announcement_delete_video(callback: CallbackQuery):
         videos = list_videos(conn)
 
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text=video_name, callback_data=f'poll_announcement:delete_video:id:{video_id}')]
-        for video_id, video_name, duration in videos
-    ])
+        [InlineKeyboardButton(text='Отмена', callback_data='poll_announcement:delete_video:cancel')],
+        *[[InlineKeyboardButton(text=video_name, callback_data=f'poll_announcement:delete_video:id:{video_id}')]
+        for video_id, video_name, duration in videos]],
+    )
 
     await callback.message.edit_text(
         text='Выберите видео для удаления',
         reply_markup=keyboard,
     )
+    await callback.answer()
+
+@router.callback_query(F.data == 'poll_announcement:delete_video:cancel')
+async def poll_announcement_cancel(callback: CallbackQuery, state: FSMContext):
+    await render_poll_announcement(callback, state)
     await callback.answer()
 
 @router.callback_query(F.data.startswith('poll_announcement:delete_video:id:'))
