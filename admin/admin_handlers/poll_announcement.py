@@ -39,11 +39,21 @@ async def render_poll_announcement_add_video(target: CallbackQuery|Message, stat
     elif isinstance(target, Message):
         await target.answer(text=text, reply_markup=poll_add_video_keyboard)
 
+# TODO
+@router.callback_query(F.data == "poll_announcement:cancel")
+async def poll_announcement_cancel(callback: CallbackQuery):
+    ...
+
 @router.callback_query(F.data == "poll_announcement:add_video")
 async def poll_announcement_add_video(callback: CallbackQuery, state: FSMContext):
     await state.set_state(AdminStates.poll_announcement_add_video)
     await render_poll_announcement_add_video(callback, state)
     await callback.answer()
+
+# TODO
+@router.callback_query(F.data == "poll_announcement:add_video:cancel")
+async def poll_announcement_add_video_cancel(callback: CallbackQuery):
+    ...
 
 @router.callback_query(F.data == "poll_announcement:add_video:name")
 async def poll_announcement_add_video_name(callback: CallbackQuery, state: FSMContext):
