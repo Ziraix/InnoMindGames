@@ -19,7 +19,6 @@ async def message_announcement(callback: CallbackQuery, state: FSMContext):
     await state.set_state(AdminStates.waiting_for_message)
     await state.update_data(message_announcement_id=msg.message_id)
 
-# TODO
 @router.callback_query(F.data == 'message_announcement:cancel')
 async def message_announcement_cancel(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
