@@ -8,6 +8,7 @@ from aiogram3_calendar import SimpleCalendar, simple_cal_callback
 from config import MAIN_GROUP_ID, MAIN_THREAD_ID, SUB_THREAD_ID
 from admin.states import AdminStates
 from admin.admin_keyboards.admin_keyboards import *
+from admin.admin_handlers.admin import render_admin_menu
 
 router = Router()
 
@@ -42,9 +43,10 @@ async def render_game_announcement(target: CallbackQuery|Message, state: FSMCont
              f"Локация: {data.get('location', '')}\n"
              f"Картинка: {photo_status}")
     if isinstance(target, CallbackQuery):
-        await target.message.edit_text(text=text, reply_markup=game_announcement_keyboard)
+        game_announcement_msg = await target.message.edit_text(text=text, reply_markup=game_announcement_keyboard)
     elif isinstance(target, Message):
-        await target.answer(text=text, reply_markup=game_announcement_keyboard)
+        game_announcement_msg = await target.answer(text=text, reply_markup=game_announcement_keyboard)
+    await state.update_data(game_announcement_msg_id=game_announcement_msg.message_id)
 
 @router.callback_query(F.data == 'game_announcement')
 async def game_announcement(callback: CallbackQuery, state: FSMContext):
@@ -54,6 +56,18 @@ async def game_announcement(callback: CallbackQuery, state: FSMContext):
     await state.update_data(name='Лайт-пакет ЧГК')
     await state.update_data(date=date_to_str(get_nearest_sunday()))
     await render_game_announcement(callback, state)
+    await callback.answer()
+
+@router.callback_query(F.data == 'game_announcement:cancel')
+async def game_announcement_cancel(callback: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    msg_id = data['game_announcement_msg_id']
+    await state.clear()
+    await callback.bot.delete_message(
+        chat_id=callback.message.chat.id,
+        message_id=msg_id
+    )
+    await render_admin_menu(callback)
     await callback.answer()
 
 @router.callback_query(F.data == 'game_announcement:date')

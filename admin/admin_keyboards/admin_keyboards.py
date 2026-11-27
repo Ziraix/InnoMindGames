@@ -1,3 +1,4 @@
+from aiogram.filters import callback_data
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 main_admin_menu = InlineKeyboardMarkup(inline_keyboard=[
@@ -13,16 +14,24 @@ game_announcement_keyboard = InlineKeyboardMarkup(inline_keyboard=[
          InlineKeyboardButton(text='Место', callback_data='game_announcement:location'),
          InlineKeyboardButton(text='Картинка', callback_data='game_announcement:picture'),
          InlineKeyboardButton(text='Отправить', callback_data='game_announcement:send')],
+        [InlineKeyboardButton(text='Отмена', callback_data='game_announcement:cancel')]
     ])
 
 poll_admin_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Добавить видео', callback_data='poll_announcement:add_video')],
     [InlineKeyboardButton(text='Удалить видео', callback_data='poll_announcement:delete_video')],
     [InlineKeyboardButton(text='Отправить опрос', callback_data='poll_announcement:send')],
+    [InlineKeyboardButton(text='Отмена', callback_data='poll_announcement:cancel')]
+
 ])
 
 poll_add_video_keyboard = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Название', callback_data='poll_announcement:add_video:name'),
      InlineKeyboardButton(text='Длительность', callback_data='poll_announcement:add_video:duration')],
-    [InlineKeyboardButton(text='Сохранить', callback_data='poll_announcement:add_video:save'),]
+    [InlineKeyboardButton(text='Сохранить', callback_data='poll_announcement:add_video:save')],
+    [InlineKeyboardButton(text='Отмена', callback_data='poll_announcement:add_video:cancel')]
+])
+
+message_announcement_keyboard = InlineKeyboardMarkup(inline_keyboard=[
+[InlineKeyboardButton(text='Отмена', callback_data='message_announcement:cancel')]
 ])
