@@ -14,7 +14,7 @@ game_announcement_keyboard = InlineKeyboardMarkup(inline_keyboard=[
          InlineKeyboardButton(text='Место', callback_data='game_announcement:location'),
          InlineKeyboardButton(text='Картинка', callback_data='game_announcement:picture'),
          InlineKeyboardButton(text='Отправить', callback_data='game_announcement:send')],
-        [InlineKeyboardButton(text='Отмена', callback_data='message_announcement:cancel')]
+        [InlineKeyboardButton(text='Отмена', callback_data='game_announcement:cancel')]
     ])
 
 poll_admin_keyboard = InlineKeyboardMarkup(inline_keyboard=[
